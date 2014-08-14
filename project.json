@@ -16,6 +16,7 @@
     "src/board.js",
     "src/game.js",
     "src/rule.js",
-    "src/piece.js"
+    "src/piece.js",
+    "src/menu.js"
   ]
 }

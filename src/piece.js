@@ -36,6 +36,9 @@ var BoardPiece = cc.Sprite.extend({
 	},
 
 	setHint: function(flag) {
+		if (this.m_nStatus != boardState.STATE_EMPTY)
+			return;
+		
 		if (this.m_bHint != flag) {
 			this.m_bHint = flag;
 
@@ -48,6 +51,13 @@ var BoardPiece = cc.Sprite.extend({
 				this._hintSprite.runAction(tintTo);
 			}
 		}
+	},
+	
+	clearHint: function() {
+		this.m_bHint = false;
+		
+		var tintTo = cc.FadeOut.create(0.25);
+		this._hintSprite.runAction(tintTo);
 	},
 
 	placeTile: function(flag) {
