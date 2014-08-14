@@ -15,6 +15,7 @@
     "src/chess.js",
     "src/board.js",
     "src/game.js",
-    "src/rule.js"
+    "src/rule.js",
+    "src/piece.js"
   ]
 }

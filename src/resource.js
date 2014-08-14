@@ -5,6 +5,7 @@ var res = {
     black_png : "res/black.png",
     white_png : "res/white.png",
     board_png : "res/board.png",
+    hint_png : "res/hint.png",
     arial_14_fnt : "res/arial-14.fnt",
     arial_14_png : "res/arial-14.png",
     back_jpg : "res/back.jpg"
@@ -25,6 +26,7 @@ var g_resources = [
     res.black_png,
     res.white_png,
     res.board_png,
+    res.hint_png,
     res.arial_14_png,
     res.back_jpg,
     

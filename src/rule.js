@@ -6,18 +6,23 @@ var gameState = {
 
 var Rule = cc.Class.extend({
 	m_nGameState: gameState.STATE_PLAYER,
+	m_nScorePlayer : 0,
+	m_nScoreEnemy : 0,
 	init: function() {
 		this.m_nGameState = gameState.STATE_PLAYER;
 		return true;
-	},
-	getGameState: function() {
-		return this.m_nGameState;
 	},
 	setGameState: function() {
 		if (this.m_nGameState == gameState.STATE_PLAYER)
 			this.m_nGameState = gameState.STATE_ENEMY;
 		else
 			this.m_nGameState = gameState.STATE_PLAYER;
+	},
+	getOpponent: function() {
+		if (this.m_nGameState == gameState.STATE_PLAYER)
+			return gameState.STATE_ENEMY;
+		
+		return gameState.STATE_PLAYER;
 	}
 });
 
