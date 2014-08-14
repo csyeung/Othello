@@ -7,6 +7,7 @@ var res = {
     board_png : "res/board.png",
     arial_14_fnt : "res/arial-14.fnt",
     arial_14_png : "res/arial-14.png",
+    back_jpg : "res/back.jpg"
 };
 
 var effect = {
@@ -25,6 +26,7 @@ var g_resources = [
     res.white_png,
     res.board_png,
     res.arial_14_png,
+    res.back_jpg,
     
     //plist
 

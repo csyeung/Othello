@@ -5,25 +5,15 @@ var GameLayer = cc.Layer.extend({
 		this._super();
 		this.init();
 		
-//		if ('touches' in cc.sys.capabilities) {
-			cc.eventManager.addListener(cc.EventListener.create({
-				event: cc.EventListener.TOUCH_ONE_BY_ONE,
-				swallowTouches: true,
-				onTouchBegan: function (touch, event) {
-					event.getCurrentTarget().processEvent(touch.getLocation());
-					return true;
-				}
-			}), this);
-//		}
-//		else if ('mouse' in cc.sys.capabilities) {
-//			cc.eventManager.addListener(cc.EventListener.create({
-//				event: cc.EventListener.MOUSE,
-//				onMouseUp: function (event) {
-//					cc.log("onMouseUp Hello");
-//					event.getCurrentTarget().processEvent(event.getLocation());
-//				}
-//			}), this);
-//		}
+		// Touch (tested in Win32, Android, iOS, Mac)
+		cc.eventManager.addListener(cc.EventListener.create({
+			event: cc.EventListener.TOUCH_ONE_BY_ONE,
+			swallowTouches: true,
+			onTouchBegan: function (touch, event) {
+				event.getCurrentTarget().processEvent(touch.getLocation());
+				return true;
+			}
+		}), this);
 
 		// add a "close" icon to exit the progress. it's an autorelease object
 		var closeItem = cc.MenuItemImage.create(
@@ -49,6 +39,20 @@ var GameLayer = cc.Layer.extend({
 	
 	createBoard:function() {
 		var winSize = cc.director.getWinSize();
+		
+		// Background
+		var bg = cc.Sprite.create(res.back_jpg);
+		
+		bg.attr({
+			x: winSize.width * 0.5,
+			y: winSize.height * 0.5,
+			anchorX: 0.5,
+			anchorY: 0.5
+		});
+		
+		this.addChild(bg, 0, 0);
+		
+		// Board
 		boardLayer = Board.create();
 		
 		boardLayer.attr({

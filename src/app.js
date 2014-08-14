@@ -1,7 +1,7 @@
 var HelloWorldLayer = cc.Layer.extend({
     isMouseDown:false,
     helloImg:null,
-//    helloLabel:null,
+    helloLabel:null,
     circle:null,
     sprite:null,
 
@@ -39,12 +39,12 @@ var HelloWorldLayer = cc.Layer.extend({
         // 3. add your codes below...
         // add a label shows "Hello World"
         // create and initialize a label
-//        this.helloLabel = cc.LabelTTF.create("Hello World", "Arial", 38);
+        this.helloLabel = cc.LabelBMFont.create("Othello", res.arial_14_fnt, 200, cc.TEXT_ALIGNMENT_LEFT, cc.p(0,0));
         // position the label on the center of the screen
-//        this.helloLabel.x = size.width / 2;
-//        this.helloLabel.y = 0;
+        this.helloLabel.x = size.width / 2;
+        this.helloLabel.y = 0;
         // add the label as a child to this layer
-//        this.addChild(this.helloLabel, 5);
+        this.addChild(this.helloLabel, 5);
 
         var lazyLayer = cc.Layer.create();
         this.addChild(lazyLayer);
@@ -72,7 +72,7 @@ var HelloWorldLayer = cc.Layer.extend({
         }, this);
 
         this.sprite.runAction(cc.Sequence.create(easeInA, easeInB, callBack));
-//        this.helloLabel.runAction(cc.Spawn.create(cc.MoveBy.create(2.5, cc.p(0, size.height - 40)),cc.TintTo.create(2.5,255,125,0)));
+        this.helloLabel.runAction(cc.MoveBy.create(2.5, cc.p(0, size.height * 0.8)));
 
         return true;
     }
