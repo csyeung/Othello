@@ -78,11 +78,40 @@ var Board = cc.Layer.extend({
 		}
 		
 		if (flag) {
-			Rule.getInstance().setGameState();
-			this.clearHint();
-			this.showHint();
-			Rule.getInstance().m_nScorePlayer = this.countScore(true);
-			Rule.getInstance().m_nScoreEnemy = this.countScore(false);
+			this.changeTurn();
+		}
+		
+		this.checkGameWin();
+	},
+	
+	checkGameWin: function() {
+		var scorePlayer = this.countScore(true);
+		var scoreEnemy = this.countScore(false);
+		var total = this.countTotal();
+
+		if (total >= Board.initSize.x * Board.initSize.y || scorePlayer == 0 || scoreEnemy == 0) {
+			this.showGameWin();
+			return true;
+		}
+		
+		return false;
+	},
+	
+	changeTurn: function() {
+		this.clearHint();
+
+		Rule.getInstance().setGameState();
+
+		var scorePlayer = this.countScore(true);
+		var scoreEnemy = this.countScore(false);
+
+		Rule.getInstance().m_nScorePlayer = scorePlayer;
+		Rule.getInstance().m_nScoreEnemy = scoreEnemy;
+
+		var hintCount = this.showHint();
+
+		if (hintCount == 0) {
+			this.changeTurn();
 		}
 	},
 	
@@ -107,21 +136,46 @@ var Board = cc.Layer.extend({
 		return count;
 	},
 	
+	countTotal: function() {
+		var count = 0;
+		
+		for (var x = 0; x < Board.initSize.x; x++) {
+			for (var y = 0; y < Board.initSize.y; y++) {
+				var piece = this.boardArray[x][y];
+
+				if (piece && piece.m_nStatus != boardState.STATE_EMPTY) {
+					count++;
+				}
+			}
+		}
+
+		return count;
+	},
+	
 	showHint: function() {
 		var turn = Rule.getInstance().m_nGameState;
+		var hint = 0;
 		
 		for (var x = 0; x < Board.initSize.x; x++) {
 			for (var y = 0; y < Board.initSize.y; y++) {
 				var piece = this.boardArray[x][y];
 				
 				if (piece) {
-					var flag = this.checkFlip(x, y);
+					if (piece.m_nStatus != boardState.STATE_EMPTY) {
+						continue;
+					}
 					
-					if (flag)
+					var flag = this.checkFlip(x, y, turn);
+					
+					if (flag) {
 						piece.setHint();
+						hint++;
+					}
 				}
 			}
 		}
+		
+		return hint;
 	},
 	
 	clearHint: function() {
@@ -144,7 +198,7 @@ var Board = cc.Layer.extend({
 			var piece = this.boardArray[x + 1][y];
 
 			if (piece && piece.m_nStatus == opponent) {
-				this.flipUp(x, y, player);
+				this.flipChessLoop(player, x + 1, y, 1, 0);
 			}
 		}
 		
@@ -152,7 +206,7 @@ var Board = cc.Layer.extend({
 			var piece = this.boardArray[x - 1][y];
 
 			if (piece && piece.m_nStatus == opponent) {
-				this.flipDown(x, y, player);
+				this.flipChessLoop(player, x - 1, y, -1, 0);
 			}
 		}
 		
@@ -160,7 +214,7 @@ var Board = cc.Layer.extend({
 			var piece = this.boardArray[x][y + 1];
 
 			if (piece && piece.m_nStatus == opponent) {
-				this.flipRight(x, y, player);
+				this.flipChessLoop(player, x, y + 1, 0, 1);
 			}
 		}
 		
@@ -168,7 +222,7 @@ var Board = cc.Layer.extend({
 			var piece = this.boardArray[x][y - 1];
 
 			if (piece && piece.m_nStatus == opponent) {
-				this.flipLeft(x, y, player);
+				this.flipChessLoop(player, x, y - 1, 0, -1);
 			}
 		}
 
@@ -176,7 +230,7 @@ var Board = cc.Layer.extend({
 			var piece = this.boardArray[x + 1][y + 1];
 
 			if (piece && piece.m_nStatus == opponent) {
-				this.flipUpRight(x, y, player);
+				this.flipChessLoop(player, x + 1, y + 1, 1, 1);
 			}
 		}
 
@@ -184,7 +238,7 @@ var Board = cc.Layer.extend({
 			var piece = this.boardArray[x + 1][y - 1];
 
 			if (piece && piece.m_nStatus == opponent) {
-				this.flipUpLeft(x, y, player);
+				this.flipChessLoop(player, x + 1, y - 1, 1, -1);
 			}
 		}
 
@@ -192,7 +246,7 @@ var Board = cc.Layer.extend({
 			var piece = this.boardArray[x - 1][y + 1];
 
 			if (piece && piece.m_nStatus == opponent) {
-				this.flipDownRight(x, y, player);
+				this.flipChessLoop(player, x - 1, y + 1, -1, 1);
 			}
 		}
 
@@ -200,227 +254,61 @@ var Board = cc.Layer.extend({
 			var piece = this.boardArray[x - 1][y - 1];
 
 			if (piece && piece.m_nStatus == opponent) {
-				this.flipDownLeft(x, y, player);
+				this.flipChessLoop(player, x - 1, y - 1, -1, -1);
 			}
 		}
 	},
 	
-	flipDownLeft: function(x, y, player) {
-		var flag = false;
-		var destx = -1;
-		var desty = -1;
-		
-		for (var i = x - 1, j = y - 1; j >= 0; i--, j--) {
-			if (i >= 0) {
-				var piece = this.boardArray[i][j];
+	flipChessLoop: function(turn, start_x, start_y, increment_x, increment_y) {
+		var x = start_x;
+		var y = start_y;
 
-				if (piece && piece.m_nStatus == Rule.getInstance().m_nGameState) {
-					flip = true;
-					destx = i;
-					desty = j;
+		while (true) {
+			if (increment_x > 0) {
+				if (x >= Board.initSize.x)
 					break;
-				}
-			}
-		}
-
-		if (flip) {
-			for (var h = x, k = y; k >= desty; h--, k--) {
-				if (h >= destx) {
-					var piece = this.boardArray[h][k];
-					
-					if (piece)
-						piece.flip(player);
-				}
-			}
-		}
-	},
-
-	flipDownRight: function(x, y, player) {
-		var flag = false;
-		var destx = -1;
-		var desty = -1;
-		
-		for (var i = x - 1, j = y + 1; j < Board.initSize.y; i--, j++) {
-			if (i >= 0) {
-				var piece = this.boardArray[i][j];
-
-				if (piece && piece.m_nStatus == Rule.getInstance().m_nGameState) {
-					flip = true;
-					destx = i;
-					desty = j;
+			} else {
+				if (x < 0)
 					break;
-				}
 			}
-		}
-		
-		if (flip) {
-			for (var i = x, j = y; j <= desty; i--, j++) {
-				if (i >= destx) {
-					var piece = this.boardArray[i][j];
-					
-					if (piece)
-						piece.flip(player);
-				}
-			}
-		}
-	},
 
-	flipUpLeft: function(x, y, player) {
-		var flag = false;
-		var destx = -1;
-		var desty = -1;
-		
-		for (var i = x + 1, j = y - 1; i < Board.initSize.x; i++, j--) {
-			if (j >= 0) {
-				var piece = this.boardArray[i][j];
-
-				if (piece && piece.m_nStatus == Rule.getInstance().m_nGameState) {
-					flip = true;
-					destx = i;
-					desty = j;
+			if (increment_y > 0) {
+				if (y >= Board.initSize.y)
 					break;
-				}
-			}
-		}
-
-		if (flip) {
-			for (var k = x, h = y; k <= destx; k++, h--) {
-				if (h >= desty) {
-					var piece = this.boardArray[k][h];
-					
-					if (piece)
-						piece.flip(player);
-				}
-			}
-		}
-	},
-	
-	flipUpRight: function(x, y, player) {
-		var flag = false;
-		var destx = -1;
-		var desty = -1;
-		
-		for (var i = x + 1, j = y + 1; i < Board.initSize.x; i++, j++) {
-			if (j < Board.initSize.y) {
-				var piece = this.boardArray[i][j];
-
-				if (piece && piece.m_nStatus == Rule.getInstance().m_nGameState) {
-					flip = true;
-					destx = i;
-					desty = j;
+			} else {
+				if (y < 0)
 					break;
-				}
 			}
-		}
-		
-		if (flip) {
-			for (var k = x, h = y; k<= destx; k++, h++){
-				if (h <= desty) {
-					var piece = this.boardArray[k][h];
-					
-					if (piece)
-						piece.flip(player);
-				}
-			}
-		}
-	},
-	
-	flipRight: function(x, y, player) {
-		var dest = -1;
-		
-		for (var i = y + 1; i < Board.initSize.y; i++) {
-			var piece = this.boardArray[x][i];
 
-			if (piece && piece.m_nStatus == Rule.getInstance().m_nGameState) {
-				dest = i;
+			var piece = this.boardArray[x][y];
+			
+			if (piece && piece.m_nStatus == turn) {
 				break;
 			}
-		}
 
-		if (dest >= 0) {
-			for (var j = y; j <= dest; j++) {
-				var piece = this.boardArray[x][j];
-				
-				if (piece)
-					piece.flip(player);
+			if (piece) {
+				piece.flip(turn);
 			}
+
+			x += increment_x;
+			y += increment_y;
 		}
 	},
 
-	flipLeft: function(x, y, player) {
-		var dest = -1;
-		for (var i = y - 1; i >= 0; i--) {
-			var piece = this.boardArray[x][i];
-
-			if (piece && piece.m_nStatus == Rule.getInstance().m_nGameState) {
-				dest = i;
-				break;
-			}
-		}
-
-		if (dest >= 0) {
-			for (var j = y; j >= dest; j--) {
-				var piece = this.boardArray[x][j];
-				
-				if (piece)
-					piece.flip(player);
-			}
-		}
-	},
-
-	flipDown: function(x, y, player) {
-		var dest = -1;
-		
-		for (var i = x - 1; i >= 0; i--) {
-			var piece = this.boardArray[i][y];
-
-			if (piece && piece.m_nStatus == Rule.getInstance().m_nGameState) {
-				dest = i;
-				break;
-			}
-		}
-		
-		if (dest >= 0) {
-			for (var j = x; j >= dest; j--) {
-				var piece = this.boardArray[j][y];
-
-				if (piece)
-					piece.flip(player);				
-			}
-		}
-	},
-
-	flipUp: function(x, y, player) {
-		var dest = -1;
-
-		for (var i = x + 1; i < Board.initSize.x; i++) {
-			var piece = this.boardArray[i][y];
-
-			if (piece && piece.m_nStatus == Rule.getInstance().m_nGameState) {
-				dest = i;
-				break;
-			}
-		}
-		
-		if (dest >= 0) {
-			for (var j = x; j<= dest; j++) {
-				var piece = this.boardArray[j][y];
-				
-				if (piece)
-					piece.flip(player);
-			}
-		}
-	},
-
-	checkFlip: function(x, y) {
+	checkFlip: function(x, y, turn) {
 		var toFlip = false;
-		var opponent = Rule.getInstance().getOpponent();
+		var opponent = 0;
+		
+		if (turn == boardState.STATE_ENEMY)
+			opponent = boardState.STATE_PLAYER;
+		else 
+			opponent = boardState.STATE_ENEMY;
 		
 		if (x + 1 < Board.initSize.x) {
 			var piece = this.boardArray[x + 1][y];
 			
 			if (piece && piece.m_nStatus == opponent) {
-				toFlip = this.checkFlipUp(x, y);
+				toFlip |= this.checkFlipLoop(turn, x + 1, y, 1, 0);
 			}
 		}
 		
@@ -428,7 +316,7 @@ var Board = cc.Layer.extend({
 			var piece = this.boardArray[x - 1][y];
 
 			if (piece && piece.m_nStatus == opponent) {
-				toFlip = this.checkFlipDown(x, y);
+				toFlip |= this.checkFlipLoop(turn, x - 1, y, -1, 0);
 			}
 		}
 		
@@ -436,7 +324,7 @@ var Board = cc.Layer.extend({
 			var piece = this.boardArray[x][y + 1];
 
 			if (piece && piece.m_nStatus == opponent) {
-				toFlip = this.checkFlipRight(x, y);
+				toFlip |= this.checkFlipLoop(turn, x, y + 1, 0, 1);
 			}
 		}
 		
@@ -444,7 +332,7 @@ var Board = cc.Layer.extend({
 			var piece = this.boardArray[x][y - 1];
 
 			if (piece && piece.m_nStatus == opponent) {
-				toFlip = this.checkFlipLeft(x, y);
+				toFlip |= this.checkFlipLoop(turn, x, y - 1, 0, -1);
 			}
 		}
 		
@@ -452,7 +340,7 @@ var Board = cc.Layer.extend({
 			var piece = this.boardArray[x + 1][y + 1];
 
 			if (piece && piece.m_nStatus == opponent) {
-				toFlip = this.checkFlipUpRight(x, y);
+				toFlip |= this.checkFlipLoop(turn, x + 1, y + 1, 1, 1);
 			}
 		}
 		
@@ -460,7 +348,7 @@ var Board = cc.Layer.extend({
 			var piece = this.boardArray[x + 1][y - 1];
 
 			if (piece && piece.m_nStatus == opponent) {
-				toFlip = this.checkFlipUpLeft(x, y);
+				toFlip |= this.checkFlipLoop(turn, x + 1, y - 1, 1, -1);
 			}
 		}
 		
@@ -468,7 +356,7 @@ var Board = cc.Layer.extend({
 			var piece = this.boardArray[x - 1][y + 1];
 
 			if (piece && piece.m_nStatus == opponent) {
-				toFlip = this.checkFlipDownRight(x, y);
+				toFlip |= this.checkFlipLoop(turn, x - 1, y + 1, -1, 1);
 			}
 		}
 		
@@ -476,132 +364,78 @@ var Board = cc.Layer.extend({
 			var piece = this.boardArray[x - 1][y - 1];
 
 			if (piece && piece.m_nStatus == opponent) {
-				toFlip = this.checkFlipDownLeft(x, y);
+				toFlip |= this.checkFlipLoop(turn, x - 1, y - 1, -1, -1);
 			}
 		}
 		
 		return toFlip;
 	},
 	
-	checkFlipUp: function(x, y) {
+	checkFlipLoop: function(turn, start_x, start_y, increment_x, increment_y) {
 		var flip = false;
-
-		for (var i = x + 1; i < Board.initSize.x; i++) {
-			var piece = this.boardArray[i][y];
+		
+		var x = start_x;
+		var y = start_y;
+		
+		while (true) {
+			if (increment_x > 0) {
+				if (x >= Board.initSize.x)
+					break;
+			} else {
+				if (x < 0)
+					break;
+			}
 			
-			if (piece && piece.m_nStatus == Rule.getInstance().m_nGameState) {
-				flip = true;
+			if (increment_y > 0) {
+				if (y >= Board.initSize.y)
+					break;
+			} else {
+				if (y < 0)
+					break;
+			}
+			
+			var piece = this.boardArray[x][y];
+
+			if (piece && piece.m_nStatus == boardState.STATE_EMPTY) {
 				break;
 			}
+
+			if (piece && piece.m_nStatus == turn) {
+				flip = true;
+				break;
+			} 
+			
+			x += increment_x;
+			y += increment_y;
 		}
 		
 		return flip;
 	},
 	
-	checkFlipDown: function(x, y) {
-		var flip = false;
-		for (var i = x - 1; i >= 0; i--) {
-			var piece = this.boardArray[i][y];
+	showGameWin: function() {
+		var winSize = cc.director.getWinSize();
+		
+		var scorePlayer = this.countScore(true);
+		var scoreEnemy = this.countScore(false);
 
-			if (piece && piece.m_nStatus == Rule.getInstance().m_nGameState) {
-				flip = true;
-				break;
-			}
+		var displayString = "";
+		
+		if (scorePlayer > scoreEnemy) {
+			displayString = "Player 1 Wins";
+		} else if (scorePlayer == scoreEnemy) {
+			displayString = "Draw";
+		} else {
+			displayString = "Player 2 Wins";
 		}
+		
+		var _player = cc.LabelBMFont.create(displayString, res.arial_14_fnt, 300, cc.TEXT_ALIGNMENT_CENTER, cc.p(0,0));
 
-		return flip;
-	},
-	
-	checkFlipRight: function(x, y) {
-		var flip = false;
-		for (var i = y + 1; i < Board.initSize.y; i++) {
-			var piece = this.boardArray[x][i];
+		_player.attr({
+			x: winSize.width * 0.5,
+			y: winSize.height * 0.5
+		});
 
-			if (piece && piece.m_nStatus == Rule.getInstance().m_nGameState) {
-				flip = true;
-				break;
-			}
-		}
-
-		return flip;
-	},
-	
-	checkFlipLeft: function(x, y) {
-		var flip = false;
-		for (var i = y - 1; i >= 0; i--) {
-			var piece = this.boardArray[x][i];
-
-			if (piece && piece.m_nStatus == Rule.getInstance().m_nGameState) {
-				flip = true;
-				break;
-			}
-		}
-
-		return flip;
-	},
-	
-	checkFlipUpRight: function(x, y) {
-		var flip = false;
-		for (var i = x + 1, j = y + 1; i < Board.initSize.x; i++, j++) {
-			if (j < Board.initSize.y) {
-				var piece = this.boardArray[i][j];
-
-				if (piece && piece.m_nStatus == Rule.getInstance().m_nGameState) {
-					flip = true;
-					break;
-				}
-			}
-		}
-
-		return flip;
-	},
-	
-	checkFlipUpLeft: function(x, y) {
-		var flip = false;
-		for (var i = x + 1, j = y - 1; i < Board.initSize.x; i++, j--) {
-			if (j >= 0) {
-				var piece = this.boardArray[i][j];
-
-				if (piece && piece.m_nStatus == Rule.getInstance().m_nGameState) {
-					flip = true;
-					break;
-				}
-			}
-		}
-
-		return flip;
-	},
-	
-	checkFlipDownRight: function(x, y) {
-		var flip = false;
-		for (var i = x - 1, j = y + 1; j < Board.initSize.y; i--, j++) {
-			if (i >= 0) {
-				var piece = this.boardArray[i][j];
-
-				if (piece && piece.m_nStatus == Rule.getInstance().m_nGameState) {
-					flip = true;
-					break;
-				}
-			}
-		}
-
-		return flip;
-	},
-	
-	checkFlipDownLeft: function(x, y) {
-		var flip = false;
-		for (var i = x - 1, j = y - 1; j >= 0; i--, j--) {
-			if (i >= 0) {
-				var piece = this.boardArray[i][j];
-
-				if (piece && piece.m_nStatus == Rule.getInstance().m_nGameState) {
-					flip = true;
-					break;
-				}
-			}
-		}
-
-		return flip;
+		this.addChild(_player, 100, 2);
 	},
 });
 

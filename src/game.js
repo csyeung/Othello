@@ -23,7 +23,7 @@ var GameLayer = cc.Layer.extend({
 				res.CloseNormal_png,
 				res.CloseSelected_png,
 				function () {
-					cc.log("Menu is clicked!");
+					cc.Director.getInstance().replaceScene(cc.TransitionFade.create(1.2, new MenuScene()));
 				}, this);
 		closeItem.attr({
 			x: size.width - 20,
