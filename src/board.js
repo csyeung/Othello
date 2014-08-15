@@ -116,7 +116,9 @@ var Board = cc.Layer.extend({
 				
 				if (piece) {
 					var flag = this.checkFlip(x, y);
-					piece.setHint(flag);
+					
+					if (flag)
+						piece.setHint();
 				}
 			}
 		}
@@ -252,9 +254,9 @@ var Board = cc.Layer.extend({
 		}
 		
 		if (flip) {
-			for (var h = x, k = y; k <= desty; h++, k--) {
-				if (h >= destx) {
-					var piece = this.boardArray[h][k];
+			for (var i = x, j = y; j <= desty; i--, j++) {
+				if (i >= destx) {
+					var piece = this.boardArray[i][j];
 					
 					if (piece)
 						piece.flip(player);
@@ -282,7 +284,7 @@ var Board = cc.Layer.extend({
 		}
 
 		if (flip) {
-			for (var k = x, h = y; k <= destx; j++, h--) {
+			for (var k = x, h = y; k <= destx; k++, h--) {
 				if (h >= desty) {
 					var piece = this.boardArray[k][h];
 					
@@ -312,9 +314,9 @@ var Board = cc.Layer.extend({
 		}
 		
 		if (flip) {
-			for (var j = x, h = y; j<= destx; j++, h++){
+			for (var k = x, h = y; k<= destx; k++, h++){
 				if (h <= desty) {
-					var piece = this.boardArray[j][h];
+					var piece = this.boardArray[k][h];
 					
 					if (piece)
 						piece.flip(player);

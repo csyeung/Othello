@@ -9,10 +9,21 @@ var MenuLayer = cc.Layer.extend({
 		// ask director the window size
 		var size = cc.director.getWinSize();
 
+		var lazyLayer = cc.Layer.create();
+		this.addChild(lazyLayer);
+
+		// add "HelloWorld" splash screen"
+		this.sprite = cc.Sprite.create(res.night_sky_png);
+		this.sprite.attr({
+			x: size.width / 2,
+			y: size.height / 2,
+		});
+		lazyLayer.addChild(this.sprite, 0);
+
 		// add a "close" icon to exit the progress. it's an autorelease object
 		var closeItem = cc.MenuItemImage.create(
-				res.CloseNormal_png,
-				res.CloseSelected_png,
+				res.menu_player_png,
+				res.menu_player_on_png,
 				function () {
 					var scene = cc.Scene.create();
 					var layer = GameLayer.create();
@@ -20,8 +31,8 @@ var MenuLayer = cc.Layer.extend({
 					cc.Director.getInstance().replaceScene(cc.TransitionFade.create(1.2, scene));
 				},this);
 		closeItem.attr({
-			x: size.width - 20,
-			y: 20,
+			x: size.width * 0.5,
+			y: size.height * 0.35,
 			anchorX: 0.5,
 			anchorY: 0.5
 		});
@@ -32,14 +43,23 @@ var MenuLayer = cc.Layer.extend({
 		this.addChild(menu, 1);
 
 		// Label
-		this.helloLabel = cc.LabelBMFont.create("Othello", res.arial_14_fnt, 200, cc.TEXT_ALIGNMENT_LEFT, cc.p(0,0));
+		this.helloLabel = cc.Sprite.create(res.title_png);
 		// position the label on the center of the screen
-		this.helloLabel.x = size.width / 2;
-		this.helloLabel.y = 0;
+		
+		this.helloLabel.attr({
+			x : size.width * 0.5,
+			y : size.height * 1.05,
+			anchorX: 0.5,
+			anchorY: 0.5
+		});
+		
 		// add the label as a child to this layer
 		this.addChild(this.helloLabel, 5);
 		
-		this.helloLabel.runAction(cc.MoveBy.create(2.5, cc.p(0, size.height * 0.8)));
+		this.helloLabel.runAction(cc.MoveTo.create(1.5, cc.p(size.width * 0.5, size.height * 0.75)));
+
+		// Background Music
+		cc.audioEngine.playMusic(effect.bgmus_mp3);
 
 		return true;
 	}

@@ -35,25 +35,23 @@ var BoardPiece = cc.Sprite.extend({
 		return true;
 	},
 
-	setHint: function(flag) {
+	setHint: function() {
 		if (this.m_nStatus != boardState.STATE_EMPTY)
 			return;
-		
-		if (this.m_bHint != flag) {
-			this.m_bHint = flag;
 
-			if (flag) {
-				var tintTo = cc.FadeIn.create(0.25);
-				this._hintSprite.runAction(tintTo);
-			}
-			else {
-				var tintTo = cc.FadeOut.create(0.25);
-				this._hintSprite.runAction(tintTo);
-			}
-		}
+		if (this.m_bHint)
+			return;
+		
+		this.m_bHint = true;
+		
+		var tintTo = cc.FadeIn.create(0.25);
+		this._hintSprite.runAction(tintTo);
 	},
 	
 	clearHint: function() {
+		if (!this.m_bHint)
+			return;
+		
 		this.m_bHint = false;
 		
 		var tintTo = cc.FadeOut.create(0.25);
@@ -68,6 +66,9 @@ var BoardPiece = cc.Sprite.extend({
 			return false;
 		
 		this.placeInitTile(flag);
+		
+		// Background Music
+		cc.audioEngine.playEffect(effect.click1_mp3);
 		
 		return true;
 	},

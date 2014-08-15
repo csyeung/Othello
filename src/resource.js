@@ -8,14 +8,19 @@ var res = {
     hint_png : "res/hint.png",
     arial_14_fnt : "res/arial-14.fnt",
     arial_14_png : "res/arial-14.png",
-    back_jpg : "res/back.jpg"
+    back_jpg : "res/back.jpg",
+    title_png : "res/title.png",
+    menu_cpu_png : "res/menu_cpu.png",
+    menu_cpu_on_png : "res/menu_cpu_on.png",
+    menu_player_png : "res/menu_player.png",
+    menu_player_on_png : "res/menu_player_on.png",
+    night_sky_png : "res/nightsky.png"
 };
 
 var effect = {
-    over_mp3 : "res/se01.mp3",
     click1_mp3 : "res/se02.mp3",
     click2_mp3 : "res/se03.mp3",
-    click3_mp3 : "res/se04.mp3",
+    bgmus_mp3 : "res/tw059.mp3",
 };
 
 var g_resources = [
@@ -29,6 +34,12 @@ var g_resources = [
     res.hint_png,
     res.arial_14_png,
     res.back_jpg,
+    res.title_png,
+    res.menu_cpu_png,
+    res.menu_cpu_on_png,
+    res.menu_player_png,
+    res.menu_player_on_png,
+    res.night_sky_png,
     
     //plist
 
@@ -40,8 +51,7 @@ var g_resources = [
     //bgm
 
     //effect
-    effect.over_mp3,
     effect.click1_mp3,
     effect.click2_mp3,
-    effect.click3_mp3,
+    effect.bgmus_mp3,
 ]
