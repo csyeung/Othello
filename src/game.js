@@ -73,19 +73,35 @@ var GameLayer = cc.Layer.extend({
 		this.addChild(boardLayer, 0, 1);
 		
 		// Score
-		var _player = cc.LabelBMFont.create("Player: ", res.arial_14_fnt, 200, cc.TEXT_ALIGNMENT_RIGHT, cc.p(0,0));
+		var playerStr = "";
+		
+		if (Rule.getInstance().m_bGameMode) {
+			playerStr = "Player: ";
+		} else {
+			playerStr = "Player 1: ";
+		}
+		
+		var _player = cc.LabelBMFont.create(playerStr, res.arial_14_fnt, 200, cc.TEXT_ALIGNMENT_RIGHT, cc.p(0,0));
 
 		_player.attr({
-			x: winSize.width * 0.78,
+			x: winSize.width * 0.8,
 			y: winSize.height * 0.8
 		});
 		
 		this.addChild(_player, 100, 2);
 
-		var _enemy = cc.LabelBMFont.create("Enemy: ", res.arial_14_fnt, 200, cc.TEXT_ALIGNMENT_RIGHT, cc.p(0,0));
+		var enemyStr = "";
+
+		if (Rule.getInstance().m_bGameMode) {
+			enemyStr = "Enemy: ";
+		} else {
+			enemyStr = "Player 2: ";
+		}
+
+		var _enemy = cc.LabelBMFont.create(enemyStr, res.arial_14_fnt, 200, cc.TEXT_ALIGNMENT_RIGHT, cc.p(0,0));
 
 		_enemy.attr({
-			x: winSize.width * 0.78,
+			x: winSize.width * 0.8,
 			y: winSize.height * 0.7
 		});
 
@@ -95,7 +111,7 @@ var GameLayer = cc.Layer.extend({
 		this.m_pScorePlayerLabel = cc.LabelBMFont.create("0", res.arial_14_fnt, 200, cc.TEXT_ALIGNMENT_LEFT, cc.p(0,0));
 
 		this.m_pScorePlayerLabel.attr({
-			x: winSize.width * 0.9,
+			x: winSize.width * 0.92,
 			y: winSize.height * 0.8,
 		});
 		
@@ -104,14 +120,14 @@ var GameLayer = cc.Layer.extend({
 		this.m_pScoreEnemyLabel = cc.LabelBMFont.create("0", res.arial_14_fnt, 200, cc.TEXT_ALIGNMENT_LEFT, cc.p(0,0));
 
 		this.m_pScoreEnemyLabel.attr({
-			x: winSize.width * 0.9,
+			x: winSize.width * 0.92,
 			y: winSize.height * 0.7,
 		});
 
 		this.addChild(this.m_pScoreEnemyLabel, 10, 2);
 		
 		// Turn
-		this.m_pTurnLabel = cc.LabelBMFont.create("Player", res.arial_14_fnt, 200, cc.TEXT_ALIGNMENT_RIGHT, cc.p(0,0));
+		this.m_pTurnLabel = cc.LabelBMFont.create("", res.arial_14_fnt, 200, cc.TEXT_ALIGNMENT_RIGHT, cc.p(0,0));
 
 		this.m_pTurnLabel.attr({
 			x: winSize.width * 0.1,
@@ -137,9 +153,25 @@ var GameLayer = cc.Layer.extend({
 			var _state = Rule.getInstance().m_nGameState;
 			
 			if (_state == gameState.STATE_ENEMY) {
-				this.m_pTurnLabel.setString("Enemy");
+				var enemyStr = "";
+
+				if (Rule.getInstance().m_bGameMode) {
+					enemyStr = "Enemy";
+				} else {
+					enemyStr = "Player 2";
+				}
+
+				this.m_pTurnLabel.setString(enemyStr);
 			} else {
-				this.m_pTurnLabel.setString("Player");
+				var playerStr = "";
+
+				if (Rule.getInstance().m_bGameMode) {
+					playerStr = "Player";
+				} else {
+					playerStr = "Player 1";
+				}
+
+				this.m_pTurnLabel.setString(playerStr);
 			}
 		}
 	}

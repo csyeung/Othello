@@ -25,10 +25,8 @@ var MenuLayer = cc.Layer.extend({
 				res.menu_player_png,
 				res.menu_player_on_png,
 				function () {
-					var scene = cc.Scene.create();
-					var layer = GameLayer.create();
-					scene.addChild(layer);
-					cc.Director.getInstance().replaceScene(cc.TransitionFade.create(1.2, scene));
+					Rule.getInstance().m_bGameMode = false;
+					this.enterGame();
 				},this);
 		playerItem.attr({
 			x: size.width * 0.25,
@@ -41,10 +39,8 @@ var MenuLayer = cc.Layer.extend({
 				res.menu_cpu_png,
 				res.menu_cpu_on_png,
 				function () {
-					var scene = cc.Scene.create();
-					var layer = GameLayer.create();
-					scene.addChild(layer);
-					cc.Director.getInstance().replaceScene(cc.TransitionFade.create(1.2, scene));
+					Rule.getInstance().m_bGameMode = true;
+					this.enterGame();
 				},this);
 		cpuItem.attr({
 			x: size.width * 0.75,
@@ -60,7 +56,6 @@ var MenuLayer = cc.Layer.extend({
 
 		// Label
 		this.helloLabel = cc.Sprite.create(res.title_png);
-		// position the label on the center of the screen
 		
 		this.helloLabel.attr({
 			x : size.width * 0.5,
@@ -71,13 +66,18 @@ var MenuLayer = cc.Layer.extend({
 		
 		// add the label as a child to this layer
 		this.addChild(this.helloLabel, 5);
-		
 		this.helloLabel.runAction(cc.MoveTo.create(1.5, cc.p(size.width * 0.5, size.height * 0.75)));
 
 		// Background Music
 		cc.audioEngine.playMusic(effect.bgmus_mp3);
 
 		return true;
+	},
+	enterGame: function() {
+		var scene = cc.Scene.create();
+		var layer = GameLayer.create();
+		scene.addChild(layer);
+		cc.Director.getInstance().replaceScene(cc.TransitionFade.create(1.2, scene));
 	}
 });
 

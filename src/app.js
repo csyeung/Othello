@@ -24,10 +24,10 @@ var HelloWorldLayer = cc.Layer.extend({
         });
         lazyLayer.addChild(this.sprite, 0);
 
-        var fadeInA = cc.FadeIn.create(2);
+        var fadeInA = cc.FadeIn.create(3);
         var easeInA = cc.EaseIn.create(fadeInA, 1);
         
-        var fadeOutB = cc.FadeOut.create(2);
+        var fadeOutB = cc.FadeOut.create(3);
         var easeInB = cc.EaseIn.create(fadeOutB, 1);
         
         var callBack = cc.CallFunc.create(function(){

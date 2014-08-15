@@ -94,6 +94,8 @@ var Board = cc.Layer.extend({
 			return true;
 		}
 		
+		// Win Condition 3: No more moves
+		
 		return false;
 	},
 	
@@ -112,6 +114,39 @@ var Board = cc.Layer.extend({
 
 		if (hintCount == 0) {
 			this.changeTurn();
+			return;
+		}
+		
+		if (Rule.getInstance().m_nGameState == boardState.STATE_ENEMY) {
+			this.aiPutChess();
+		}
+	},
+	
+	aiPutChess: function() {
+		// Pick a cell based on score 
+		var posx = 0, posy = 0;
+		var score = 0;
+		
+		for (var x = 0; x < Board.initSize.x; x++) {
+			for (var y = 0; y < Board.initSize.y; y++) {
+				var piece = this.boardArray[x][y];
+				
+				if (piece && piece.m_nStatus == boardState.STATE_EMPTY && piece.m_bHint) {
+					var pieceScore = items[x][y];
+					
+					if (pieceScore > score) {
+						posx = x;
+						posy = y;
+					}
+				}
+			}
+		}
+		
+		var targetPiece = this.boardArray[posx][posy];
+		
+		if (targetPiece) {
+			if (targetPiece.placeTile(false))
+				this.changeTurn();
 		}
 	},
 	
