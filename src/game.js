@@ -9,6 +9,9 @@ var GameLayer = cc.Layer.extend({
 		this._super();
 		this.init();
 		
+		// Reset turn
+		Rule.getInstance().m_nGameState = gameState.STATE_PLAYER;
+		
 		// Touch (tested in Win32, Android, iOS, Mac)
 		cc.eventManager.addListener(cc.EventListener.create({
 			event: cc.EventListener.TOUCH_ONE_BY_ONE,

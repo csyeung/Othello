@@ -95,8 +95,43 @@ var Board = cc.Layer.extend({
 		}
 		
 		// Win Condition 3: No more moves
+		if (this.checkNoMove()) {
+			this.showGameWin();
+			return true;
+		}
 		
 		return false;
+	},
+	
+	checkNoMove: function() {
+		var enemyHintCount = this.getHintCount(boardState.STATE_ENEMY);
+		var playerHintCount = this.getHintCount(boardState.STATE_PLAYER);
+		
+		return (enemyHintCount == 0 && playerHintCount == 0);
+	},
+	
+	getHintCount: function(turn) {
+		var hint = 0;
+
+		for (var x = 0; x < Board.initSize.x; x++) {
+			for (var y = 0; y < Board.initSize.y; y++) {
+				var piece = this.boardArray[x][y];
+
+				if (piece) {
+					if (piece.m_nStatus != boardState.STATE_EMPTY) {
+						continue;
+					}
+
+					var flag = this.checkFlip(x, y, turn);
+
+					if (flag) {
+						hint++;
+					}
+				}
+			}
+		}
+		
+		return hint;
 	},
 	
 	changeTurn: function() {
@@ -117,7 +152,7 @@ var Board = cc.Layer.extend({
 			return;
 		}
 		
-		if (Rule.getInstance().m_nGameState == boardState.STATE_ENEMY) {
+		if (Rule.getInstance().m_bGameMode && Rule.getInstance().m_nGameState == boardState.STATE_ENEMY) {
 			this.aiPutChess();
 		}
 	},
@@ -320,6 +355,9 @@ var Board = cc.Layer.extend({
 			}
 
 			var piece = this.boardArray[x][y];
+			
+			if (piece && piece.m_nStatus == boardState.STATE_EMPTY)
+				break;
 			
 			if (piece && piece.m_nStatus == turn) {
 				flip = true;
