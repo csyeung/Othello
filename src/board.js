@@ -262,6 +262,10 @@ var Board = cc.Layer.extend({
 	flipChessLoop: function(turn, start_x, start_y, increment_x, increment_y) {
 		var x = start_x;
 		var y = start_y;
+		
+		var flip = false;
+		var dest_x = 0;
+		var dest_y = 0;
 
 		while (true) {
 			if (increment_x > 0) {
@@ -283,15 +287,45 @@ var Board = cc.Layer.extend({
 			var piece = this.boardArray[x][y];
 			
 			if (piece && piece.m_nStatus == turn) {
+				flip = true;
+				dest_x = x;
+				dest_y = y;
 				break;
-			}
-
-			if (piece) {
-				piece.flip(turn);
 			}
 
 			x += increment_x;
 			y += increment_y;
+		}
+		
+		if (flip) {
+			var i = start_x;
+			var j = start_y;
+
+			while (true) {
+				if (increment_x > 0) {
+					if (i >= dest_x)
+						break;
+				} else {
+					if (i < dest_x)
+						break;
+				}
+
+				if (increment_y > 0) {
+					if (j >= dest_y)
+						break;
+				} else {
+					if (j < dest_y)
+						break;
+				}
+
+				var piece = this.boardArray[i][j];
+
+				if (piece)
+					piece.flip(turn);
+				
+				i += increment_x;
+				j += increment_y;
+			}
 		}
 	},
 
@@ -413,8 +447,6 @@ var Board = cc.Layer.extend({
 	},
 	
 	showGameWin: function() {
-		var winSize = cc.director.getWinSize();
-		
 		var scorePlayer = this.countScore(true);
 		var scoreEnemy = this.countScore(false);
 
@@ -431,8 +463,8 @@ var Board = cc.Layer.extend({
 		var _player = cc.LabelBMFont.create(displayString, res.arial_14_fnt, 300, cc.TEXT_ALIGNMENT_CENTER, cc.p(0,0));
 
 		_player.attr({
-			x: winSize.width * 0.5,
-			y: winSize.height * 0.5
+			x: this.width * 0.5,
+			y: this.height * 0.5
 		});
 
 		this.addChild(_player, 100, 2);

@@ -2,6 +2,7 @@ var GameLayer = cc.Layer.extend({
 	boardLayer:null,
 	m_pScorePlayerLabel: null,
 	m_pScoreEnemyLabel: null,
+	m_pTurnLabel: null,
 	
 	ctor:function () {
 		var size = cc.director.getWinSize();
@@ -108,6 +109,16 @@ var GameLayer = cc.Layer.extend({
 		});
 
 		this.addChild(this.m_pScoreEnemyLabel, 10, 2);
+		
+		// Turn
+		this.m_pTurnLabel = cc.LabelBMFont.create("Player", res.arial_14_fnt, 200, cc.TEXT_ALIGNMENT_RIGHT, cc.p(0,0));
+
+		this.m_pTurnLabel.attr({
+			x: winSize.width * 0.1,
+			y: winSize.height * 0.7
+		});
+
+		this.addChild(this.m_pTurnLabel, 101, 2);
 	},
 	
 	processEvent: function(event) {
@@ -121,6 +132,16 @@ var GameLayer = cc.Layer.extend({
 		
 		if (this.m_pScoreEnemyLabel)
 			this.m_pScoreEnemyLabel.setString(Rule.getInstance().m_nScoreEnemy);
+	
+		if (this.m_pTurnLabel) {
+			var _state = Rule.getInstance().m_nGameState;
+			
+			if (_state == gameState.STATE_ENEMY) {
+				this.m_pTurnLabel.setString("Enemy");
+			} else {
+				this.m_pTurnLabel.setString("Player");
+			}
+		}
 	}
 });
 

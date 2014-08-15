@@ -21,7 +21,7 @@ var MenuLayer = cc.Layer.extend({
 		lazyLayer.addChild(this.sprite, 0);
 
 		// add a "close" icon to exit the progress. it's an autorelease object
-		var closeItem = cc.MenuItemImage.create(
+		var playerItem = cc.MenuItemImage.create(
 				res.menu_player_png,
 				res.menu_player_on_png,
 				function () {
@@ -30,14 +30,30 @@ var MenuLayer = cc.Layer.extend({
 					scene.addChild(layer);
 					cc.Director.getInstance().replaceScene(cc.TransitionFade.create(1.2, scene));
 				},this);
-		closeItem.attr({
-			x: size.width * 0.5,
+		playerItem.attr({
+			x: size.width * 0.25,
 			y: size.height * 0.35,
 			anchorX: 0.5,
 			anchorY: 0.5
 		});
 
-		var menu = cc.Menu.create(closeItem);
+		var cpuItem = cc.MenuItemImage.create(
+				res.menu_cpu_png,
+				res.menu_cpu_on_png,
+				function () {
+					var scene = cc.Scene.create();
+					var layer = GameLayer.create();
+					scene.addChild(layer);
+					cc.Director.getInstance().replaceScene(cc.TransitionFade.create(1.2, scene));
+				},this);
+		cpuItem.attr({
+			x: size.width * 0.75,
+			y: size.height * 0.35,
+			anchorX: 0.5,
+			anchorY: 0.5
+		});
+
+		var menu = cc.Menu.create(playerItem, cpuItem);
 		menu.x = 0;
 		menu.y = 0;
 		this.addChild(menu, 1);
