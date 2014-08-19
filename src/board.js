@@ -36,6 +36,9 @@ var Board = cc.Layer.extend({
 					sp.placeInitTile(false);
 				}
 				
+				if ((x == 1 && y == 1))
+					sp.setBlock();
+				
 				this.boardArray[x][y] = sp;
 				this.addChild(sp, 0, 1);
 			}
@@ -118,15 +121,13 @@ var Board = cc.Layer.extend({
 				var piece = this.boardArray[x][y];
 
 				if (piece) {
-					if (piece.m_nStatus != boardState.STATE_EMPTY) {
+					if (piece.m_nStatus != boardState.STATE_EMPTY)
 						continue;
-					}
 
 					var flag = this.checkFlip(x, y, turn);
 
-					if (flag) {
+					if (flag)
 						hint++;
-					}
 				}
 			}
 		}
@@ -213,7 +214,7 @@ var Board = cc.Layer.extend({
 			for (var y = 0; y < Board.initSize.y; y++) {
 				var piece = this.boardArray[x][y];
 
-				if (piece && piece.m_nStatus != boardState.STATE_EMPTY) {
+				if (piece && piece.m_nStatus != boardState.STATE_EMPTY && piece.m_nState != boardState.STATE_BLOCK) {
 					count++;
 				}
 			}
@@ -231,9 +232,8 @@ var Board = cc.Layer.extend({
 				var piece = this.boardArray[x][y];
 				
 				if (piece) {
-					if (piece.m_nStatus != boardState.STATE_EMPTY) {
+					if (piece.m_nStatus != boardState.STATE_EMPTY)
 						continue;
-					}
 					
 					var flag = this.checkFlip(x, y, turn);
 					
@@ -359,6 +359,9 @@ var Board = cc.Layer.extend({
 			if (piece && piece.m_nStatus == boardState.STATE_EMPTY)
 				break;
 			
+			if (piece && piece.m_nStatus == boardState.STATE_BLOCK)
+				break;
+
 			if (piece && piece.m_nStatus == turn) {
 				flip = true;
 				dest_x = x;
@@ -503,9 +506,11 @@ var Board = cc.Layer.extend({
 			
 			var piece = this.boardArray[x][y];
 
-			if (piece && piece.m_nStatus == boardState.STATE_EMPTY) {
+			if (piece && piece.m_nStatus == boardState.STATE_EMPTY)
 				break;
-			}
+			
+			if (piece && piece.m_nStatus == boardState.STATE_BLOCK)
+				break;
 
 			if (piece && piece.m_nStatus == turn) {
 				flip = true;

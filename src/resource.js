@@ -14,7 +14,8 @@ var res = {
     menu_cpu_on_png : "res/menu_cpu_on.png",
     menu_player_png : "res/menu_player.png",
     menu_player_on_png : "res/menu_player_on.png",
-    night_sky_png : "res/nightsky.png"
+    night_sky_png : "res/nightsky.png",
+    block_png : "res/block.png"
 };
 
 var effect = {
@@ -31,6 +32,7 @@ var g_resources = [
     res.black_png,
     res.white_png,
     res.board_png,
+    res.block_png,
     res.hint_png,
     res.arial_14_png,
     res.back_jpg,
