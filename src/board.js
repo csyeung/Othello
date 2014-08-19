@@ -91,8 +91,9 @@ var Board = cc.Layer.extend({
 		var scorePlayer = this.countScore(true);
 		var scoreEnemy = this.countScore(false);
 		var total = this.countTotal();
-
-		if (total >= Board.initSize.x * Board.initSize.y || scorePlayer == 0 || scoreEnemy == 0) {
+		var boardTotal = Board.initSize.x * Board.initSize.y - this.countBlock();
+		
+		if (total >= boardTotal || scorePlayer == 0 || scoreEnemy == 0) {
 			this.showGameWin();
 			return true;
 		}
@@ -111,6 +112,23 @@ var Board = cc.Layer.extend({
 		var playerHintCount = this.getHintCount(boardState.STATE_PLAYER);
 		
 		return (enemyHintCount == 0 && playerHintCount == 0);
+	},
+	
+	countBlock: function() {
+		var hint = 0;
+
+		for (var x = 0; x < Board.initSize.x; x++) {
+			for (var y = 0; y < Board.initSize.y; y++) {
+				var piece = this.boardArray[x][y];
+
+				if (piece) {
+					if (piece.m_nStatus == boardState.STATE_BLOCK)
+						hint++;
+				}
+			}
+		}
+
+		return hint;
 	},
 	
 	getHintCount: function(turn) {
