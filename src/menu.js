@@ -68,11 +68,12 @@ var MenuLayer = cc.Layer.extend({
 		this.addChild(this.helloLabel, 5);
 		this.helloLabel.runAction(cc.MoveTo.create(1.5, cc.p(size.width * 0.5, size.height * 0.75)));
 
-		// Background Music
+		// Background Music - need to comment out when working on windows
 		cc.audioEngine.playMusic(effect.bgmus_mp3);
 
 		return true;
 	},
+	
 	enterGame: function() {
 		var scene = cc.Scene.create();
 		var layer = GameLayer.create();

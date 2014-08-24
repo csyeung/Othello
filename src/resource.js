@@ -15,7 +15,9 @@ var res = {
     menu_player_png : "res/menu_player.png",
     menu_player_on_png : "res/menu_player_on.png",
     night_sky_png : "res/nightsky.png",
-    block_png : "res/block.png"
+    block_png : "res/block.png",
+    pass_on_png : "res/pass_on.png",
+    pass_off_png : "res/pass_off.png",
 };
 
 var effect = {
@@ -42,6 +44,8 @@ var g_resources = [
     res.menu_player_png,
     res.menu_player_on_png,
     res.night_sky_png,
+    res.pass_on_png,
+    res.pass_off_png,
     
     //plist
 

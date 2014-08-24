@@ -177,7 +177,7 @@ var Board = cc.Layer.extend({
 	},
 	
 	aiPutChess: function() {
-		// Pick a cell based on score 
+		// Pick a cell based on score predefined
 		var posx = 0, posy = 0;
 		var score = 0;
 		
@@ -204,6 +204,7 @@ var Board = cc.Layer.extend({
 		}
 	},
 	
+	// Get criteria for game end and for display
 	countScore: function(flag) {
 		var state = gameState.STATE_PLAYER;
 		

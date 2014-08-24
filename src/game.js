@@ -35,8 +35,26 @@ var GameLayer = cc.Layer.extend({
 			anchorX: 0.5,
 			anchorY: 0.5
 		});
+		
+		// Give up function - a button to pass the current turn
+		// TODO: Implement Limits
+		var passItem = cc.MenuItemImage.create(
+				res.pass_off_png,
+				res.pass_on_png,
+				function () {
+					if (this.boardLayer) {
+						this.boardLayer.changeTurn();
+					}
+				}, this);
+		
+		passItem.attr({
+			x: 20,
+			y: 20,
+			anchorX: 0,
+			anchorY: 0
+		});
 
-		var menu = cc.Menu.create(closeItem);
+		var menu = cc.Menu.create(closeItem, passItem);
 		menu.x = 0;
 		menu.y = 0;
 		this.addChild(menu, 1);
@@ -62,9 +80,9 @@ var GameLayer = cc.Layer.extend({
 		this.addChild(bg, 0, 0);
 		
 		// Board
-		boardLayer = Board.create();
+		this.boardLayer = Board.create();
 		
-		boardLayer.attr({
+		this.boardLayer.attr({
 			x: winSize.width * 0.5 - 350 * 0.5,
 			y: winSize.height * 0.5 - 350 * 0.5,
 			width: 350,
@@ -73,7 +91,7 @@ var GameLayer = cc.Layer.extend({
 			anchorY: 0.5
 		});
 
-		this.addChild(boardLayer, 0, 1);
+		this.addChild(this.boardLayer, 0, 1);
 		
 		// Score
 		var playerStr = "";
@@ -140,11 +158,14 @@ var GameLayer = cc.Layer.extend({
 		this.addChild(this.m_pTurnLabel, 101, 2);
 	},
 	
+	// Pass the game handled click event into board for proces
 	processEvent: function(event) {
-		if (boardLayer)
-			boardLayer.processEvent(event);
+		if (this.boardLayer)
+			this.boardLayer.processEvent(event);
 	},
 	
+	// Loop through the score for update
+	// TODO: should pass an update function callback to board inside instead
 	update: function(dt) {
 		if (this.m_pScorePlayerLabel)
 			this.m_pScorePlayerLabel.setString(Rule.getInstance().m_nScorePlayer);

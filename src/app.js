@@ -24,6 +24,7 @@ var HelloWorldLayer = cc.Layer.extend({
         });
         lazyLayer.addChild(this.sprite, 0);
 
+        // Splash Screen Implementation
         var fadeInA = cc.FadeIn.create(3);
         var easeInA = cc.EaseIn.create(fadeInA, 1);
         

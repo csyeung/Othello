@@ -22,6 +22,7 @@ var BoardPiece = cc.Sprite.extend({
 	},
 
 	init: function() {
+		// Default a hint sprit eimage
 		this._hintSprite = cc.Sprite.create(res.hint_png);
 
 		this._hintSprite.attr({
@@ -34,6 +35,7 @@ var BoardPiece = cc.Sprite.extend({
 
 		this.addChild(this._hintSprite, 1);
 
+		// Default a block sprite image
 		this._blockSprite = cc.Sprite.create(res.block_png);
 		
 		this._blockSprite.attr({
@@ -92,12 +94,13 @@ var BoardPiece = cc.Sprite.extend({
 		
 		this.placeInitTile(flag);
 		
-		// Background Music
+		// Background Music - need to comment out when working on windows
 		cc.audioEngine.playEffect(effect.click1_mp3);
 		
 		return true;
 	},
 	
+	// Place tile without checking, using for game start
 	placeInitTile: function (flag) {
 		this._chess = Chess.create(flag);
 
@@ -120,6 +123,8 @@ var BoardPiece = cc.Sprite.extend({
 		this.addChild(this._chess, 1, 1);	
 	},
 	
+	// Flip chess 
+	// TODO: Add flip animation
 	flip: function(player) {
 		if (this.m_nStatus == boardState.STATE_EMPTY)
 			return;

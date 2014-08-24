@@ -4,6 +4,8 @@ var gameState = {
 	STATE_ENEMY: 2
 };
 
+// AI priority rank array 
+// Just for implement AI in a faster track with personal experience
 var items = [[1,34,19,7,8,20,35,2], 
              [33,60,54,45,46,53,59,36],
              [13,55,21,25,26,22,52,18],
@@ -13,6 +15,7 @@ var items = [[1,34,19,7,8,20,35,2],
              [40,57,49,41,42,50,58,37],
              [4,39,15,11,12,16,38,3]];
 
+// To handle game state as a singleton
 var Rule = cc.Class.extend({
 	m_nGameState: gameState.STATE_PLAYER,
 	m_nScorePlayer : 0,
